@@ -1,65 +1,35 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { MdOutlineEmail } from "react-icons/md";
 import './LoginSignUp.css'
 import { useNavigate } from 'react-router-dom';
-// import { useAuth } from '../Auth/AuthContext';
-const LoginSignUp = () => {
+import axios from 'axios';
+import { AuthContext } from '../Auth/AuthContext';
 
-    const [action,SetAction] = useState("Login");
+const LoginSignUp = ({ history }) => {
+const [username, setUsername] = useState('');
+const [password, setPassword] = useState('');
+const { login } = useContext(AuthContext);
+const [errorMessage, setErrorMessage] = useState('');
+const [action, SetAction] = useState('Login')
+const navigate = useNavigate();
 
-    // login fiunctionality
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
+const handleSubmit = async (e) => {
+e.preventDefault();
+try {
+const response = await axios.post('http://localhost:8080/api/auth/login', { username, password });
+login(response.data.token);
+console.log(response.data.token);
+navigate('/dashboard');
 
-    const [errorMessage, setErrorMessage] = useState("");
+} catch (error) {
+console.error('Login failed', error);
+setErrorMessage("Unauthorized! Invalid credentials");
+setTimeout(() => {
+    setErrorMessage('');
+}, 5000);
+}
+};
 
-    const navigate = useNavigate();
-    //get the login function from AuthContext
-    // const { login }  = useAuth();
-    // function to handle login request
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-
-    const user = {
-        username,
-        password,
-    };
-
-    try {
-        const response = await fetch("http://localhost:8080/api/auth/login", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(user),
-        });
-        if (response.status === 401){
-            //set the error message
-            setErrorMessage('Unauthorized: Invalid credentials');
-
-            // clear the error message afeter 10 seconds
-            setTimeout(() => {
-                setErrorMessage('');
-            }, 5000);
-            return;
-        }
-        if (response.ok){
-            const data = await response.json();
-            console.log(data.token);
-            localStorage.setItem("token", data.token);
-            // login();
-            navigate('/dashboard');
-            
-        }else {
-            console.log(response);
-        }
-    }catch(error) {
-        console.log(error);
-       
-        
-    }
-    }
 
     return (
         <dev className = "container">
