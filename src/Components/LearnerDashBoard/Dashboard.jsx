@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 import { useNavigate } from "react-router-dom";
 import './Dashboard.css'
+import Cards from "./Card";
 
 const Dashboard = () => {
     const navigate = useNavigate();
@@ -26,10 +27,11 @@ const Dashboard = () => {
             </div> 
             </header>
             <div className="wrapper">
-            <div className="submitted">submitted</div>
-          <div className="completed">completed</div>
-          <div className="needReWork">needRework</div>
-          <div className="inReview">InReview</div>
+            <div className="submitted">
+                <Cards />
+
+            </div>
+         
             </div>
           
            
